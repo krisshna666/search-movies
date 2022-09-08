@@ -1,0 +1,72 @@
+<div class="container-all">
+  <div class="input-cover">
+    <div class="input-search">
+      <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+        <input
+          type="text"
+          [(ngModel)]="searchMoviesQuery"
+          (keyup.enter)="searchMovies()"
+          nz-input
+          placeholder="Search Movies"
+        />
+      </nz-input-group>
+      <ng-template #suffixIconButton>
+        <button
+          nz-button
+          nzType="primary"
+          nzSearch
+          (click)="searchMovies()"
+          style="cursor: pointer"
+        >
+          <span nz-icon nzType="search"></span>
+        </button>
+      </ng-template>
+    </div>
+  </div>
+  <div *ngIf="moviesList?.result?.length == 0" class="spinnerComp">
+    <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+  </div>
+  <h1 *ngIf="moviesList?.result?.length != 0">Trending</h1>
+  <div class="main-box" *ngIf="moviesList?.result?.length != 0">
+    <div class="moviesBox" *ngFor="let i of moviesList?.results">
+      <div *ngIf="!i.backdrop_path; else alt">
+        <nz-skeleton-element
+          nzType="image"
+          [nzActive]="true"
+          width="320px"
+          height="140px"
+        ></nz-skeleton-element>
+      </div>
+      <ng-template #alt>
+        <img
+          #alt
+          nz-image
+          width="320px"
+          height="140px"
+          nzSrc="http://image.tmdb.org/t/p/w500/{{ i.backdrop_path }}"
+          alt=""
+      /></ng-template>
+
+      <div class="movie-desc" (click)="getMoviesIndividually(i.id)">
+        <div class="movieTitle">{{ i.original_title }}</div>
+        <div style="display: flex" *ngIf="i.vote_count && i.vote_average">
+          <div><i class="fas fa-star"></i></div>
+          &nbsp;
+          <div>
+            {{
+              ((((i.vote_count / i.vote_average) * 5) / i.vote_count) * 100) /
+                20 | number: "1.2-2"
+            }}/5
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="text-center">
+  <nz-pagination
+    (nzPageIndexChange)="pageChange($event)"
+    [nzPageIndex]="filterForm?.controls?.page?.value || 1"
+    [nzTotal]="filterForm?.controls?.total?.value || 5"
+  ></nz-pagination>
+</div>

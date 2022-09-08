@@ -1,0 +1,80 @@
+<div class="container-all">
+  <nz-skeleton
+    [nzActive]="true"
+    *ngIf="individualMovieDetails == ''"
+    [nzParagraph]="{ rows: 10 }"
+  ></nz-skeleton>
+  <!-- <nz-spin nzSimple [nzSize]="'large'"></nz-spin> -->
+  <div
+    class="sub-container"
+    *ngIf="individualMovieDetails && individualMovieDetails?.poster_path"
+  >
+    <div class="desc-left">
+      <div>
+        <div (click)="navigateBack()" style="cursor: pointer">
+          <i class="fas fa-long-arrow-alt-left"></i>
+        </div>
+        <div
+          *ngIf="individualMovieDetails?.belongs_to_collection?.name; else alt"
+          class="movie-title"
+        >
+          {{ individualMovieDetails?.belongs_to_collection?.name }}
+        </div>
+        <ng-template #alt>
+          <div class="movie-title">
+            {{ individualMovieDetails?.original_title }}
+          </div>
+        </ng-template>
+        <div class="rating">
+          Rating&nbsp;:&nbsp;
+          {{
+            ((((individualMovieDetails.vote_count /
+              individualMovieDetails.vote_average) *
+              5) /
+              individualMovieDetails.vote_count) *
+              100) /
+              20 | number: "1.2-2"
+          }}/5
+        </div>
+        <div class="movie-desc">
+          {{ individualMovieDetails?.overview }}
+        </div>
+        <table style="table-layout: auto">
+          <tr>
+            <td style="font-weight: bold">Release date</td>
+            <td>{{ individualMovieDetails?.release_date | date: "yyyy" }}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Original Language</td>
+            <td style="display: flex">
+              <div
+                *ngFor="
+                  let i of individualMovieDetails?.spoken_languages;
+                  let j = index
+                "
+              >
+                {{ i?.english_name
+                }}<span
+                  *ngIf="
+                    j != individualMovieDetails?.spoken_languages.length - 1
+                  "
+                  >,</span
+                >
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="poster-right" *ngIf="individualMovieDetails?.poster_path">
+      <img
+        nz-image
+        nzSrc="http://image.tmdb.org/t/p/w500/{{
+          individualMovieDetails?.poster_path
+        }}"
+        alt=""
+        div
+      />
+    </div>
+  </div>
+</div>
